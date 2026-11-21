@@ -5,7 +5,7 @@ kind: ServingTemplate
 metadata:
   name: e2e-hello-serving24
   annotations:
-    scenarios.ai.sap.com/name: "E2E Hello World Lab"
+    scenarios.ai.sap.com/name: "E2E-Hello-World-Lab"
     scenarios.ai.sap.com/description: "Complete AI Core learning and serving lab"
     executables.ai.sap.com/name: "Hello-World-Serving"
     executables.ai.sap.com/description: "Serve Hello World through an HTTP endpoint"

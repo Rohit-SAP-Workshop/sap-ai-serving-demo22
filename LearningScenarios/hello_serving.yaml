@@ -1,0 +1,58 @@
+
+apiVersion: ai.sap.com/v1alpha1
+kind: ServingTemplate
+
+metadata:
+  name: e2e-hello-serving24
+  annotations:
+    scenarios.ai.sap.com/name: "E2E Hello World Lab"
+    scenarios.ai.sap.com/description: "Complete AI Core learning and serving lab"
+    executables.ai.sap.com/name: "Hello World Serving"
+    executables.ai.sap.com/description: "Serve Hello World through an HTTP endpoint"
+  labels:
+    scenarios.ai.sap.com/id: "e2e-hello-lab24"
+    ai.sap.com/version: "1.0"
+
+spec:
+  template:
+    apiVersion: serving.kserve.io/v1beta1
+    metadata:
+      labels: |
+        ai.sap.com/resourcePlan: starter
+    spec: |
+      predictor:
+        minReplicas: 1
+        maxReplicas: 1
+        containers:
+          - name: kserve-container
+            image: docker.io/python:3.11-slim
+            ports:
+              - containerPort: 9001
+                protocol: TCP
+            command: ["python3", "-u", "-c"]
+            args:
+              - |
+                from http.server import HTTPServer, BaseHTTPRequestHandler
+                import json
+
+                class Handler(BaseHTTPRequestHandler):
+                    def do_GET(self):
+                        if self.path == "/v1/hello":
+                            result = {
+                                "message": "Hello from SAP AI Core E2E Lab!"
+                            }
+                        elif self.path == "/v1/health":
+                            result = {"status": "healthy"}
+                        else:
+                            self.send_error(404)
+                            return
+
+                        body = json.dumps(result).encode("utf-8")
+                        self.send_response(200)
+                        self.send_header("Content-Type", "application/json")
+                        self.send_header("Content-Length", str(len(body)))
+                        self.end_headers()
+                        self.wfile.write(body)
+
+                print("HTTP server started", flush=True)
+                HTTPServer(("0.0.0.0", 9001), Handler).serve_forever()

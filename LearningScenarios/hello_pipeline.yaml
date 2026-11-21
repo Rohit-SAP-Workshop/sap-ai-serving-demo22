@@ -1,0 +1,35 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: e2e-hello-workflow24
+  annotations:
+    scenarios.ai.sap.com/name: "E2E Hello World Lab"
+    scenarios.ai.sap.com/description: "Complete AI Core learning and serving lab"
+    executables.ai.sap.com/name: "Hello World Learning"
+    executables.ai.sap.com/description: "Run Hello World as an AI Core execution"
+  labels:
+    scenarios.ai.sap.com/id: "e2e-hello-lab24"
+    ai.sap.com/version: "1.0"
+
+spec:
+  entrypoint: mypipeline
+  templates:
+    - name: mypipeline
+      steps:
+        - - name: greet
+            template: greeter
+
+    - name: greeter
+      metadata:
+        labels:
+          ai.sap.com/resourcePlan: starter
+      container:
+        image: docker.io/python:3.11-slim
+        command:
+          - python3
+          - "-c"
+        args:
+          - |
+            print("Hello from SAP AI Core E2E Lab!")
+            print("Learning pipeline executed successfully.")
